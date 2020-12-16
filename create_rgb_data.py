@@ -17,6 +17,7 @@ corruption=0.3#Fraction of the pixels that you want to discard
 #%% Get image and create y
 # read original image and downsize for speed
 Xoriginal =imageio.imread(path_to_your_image, pilmode='RGB') # read in grayscale
+rgb = []
 for index, mode in enumerate(['r', 'g', 'b']):
   Xorig = Xoriginal[:, :, index]
   #Downsize image 
@@ -46,6 +47,8 @@ for index, mode in enumerate(['r', 'g', 'b']):
   masked=X*mask
   Xm = 255 * np.ones(X.shape)
   Xm.T.flat[ri] = X.T.flat[ri]
+  print(Xm.dtype, np.max(Xm), np.min(Xm))
+  rgb.append(Xm)
   #%%
   plt.imshow(X)
   plt.title("Original")
@@ -67,3 +70,5 @@ for index, mode in enumerate(['r', 'g', 'b']):
   np.save(dir_name+'/y',b)
   plt.imsave(dir_name+'/incomplete.png',Xm)
   plt.imsave(dir_name+'/original_with_crop.png',X)
+rgb = np.array(rgb).astype('uint8').transpose(1, 2, 0)
+plt.imsave('corrupted.png', rgb)
